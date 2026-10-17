@@ -2,6 +2,8 @@
 set -Eeuo pipefail
 
 PERSISTENT_ROOT="${PERSISTENT_ROOT:-/models/robotwin-persistent}"
+PROFILE_SCRIPT="/RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda-multigpu/profile.sh"
+source "${PROFILE_SCRIPT}"
 mkdir -p \
   /workspace/runtime/.cache/huggingface \
   /workspace/runtime/outputs \

@@ -30,8 +30,8 @@ Compared with LingBot-VLA 1.0, LingBot-VLA 2.0 improves three core capabilities:
 
 ## Installation
 
-For the pinned RoboTwin clean-50 post-training environment on eight RTX 4090
-GPUs, see [the CUDA 12.8 preparation guide](docs/CUDA_4090_PREP.md).
+For the pinned RoboTwin clean-50 post-training environment on 4/8 RTX 4090 or
+RTX 5090 GPUs, see [the CUDA multi-GPU guide](docs/CUDA_MULTI_GPU_PREP.md).
 
 Requirements:
 

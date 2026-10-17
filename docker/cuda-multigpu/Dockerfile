@@ -3,15 +3,16 @@ ARG BASE_IMAGE=nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04
 FROM ${BASE_IMAGE}
 
 LABEL org.opencontainers.image.title="LingBot-VLA-v2 RoboTwin CUDA 12.8 external-data runtime" \
-      org.opencontainers.image.description="Training and evaluation runtime for 8x RTX 4090"
+      org.opencontainers.image.description="Training runtime for 4/8x RTX 4090 or RTX 5090"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+ARG CUDA_ARCH_LIST="8.9+PTX"
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_ROOT_USER_ACTION=ignore \
     CUDA_DEVICE_ORDER=PCI_BUS_ID \
-    TORCH_CUDA_ARCH_LIST="8.9+PTX" \
+    TORCH_CUDA_ARCH_LIST=${CUDA_ARCH_LIST} \
     MAX_JOBS=16 \
     HF_HOME=/workspace/runtime/.cache/huggingface \
     HF_LEROBOT_HOME=/RoboTwin/data/lerobot-clean \
@@ -67,7 +68,7 @@ RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
       'lerobot[dataset]==0.6.0' 'h5py==3.14.0'
 
 # Build NVIDIA FlashAttention against the CUDA 12.8/PyTorch environment. The
-# architecture list embeds native Ada code and PTX fallback.
+# The build script selects native Ada (8.9) or Blackwell (12.0) code plus PTX.
 RUN --mount=type=cache,target=/root/.cache/pip,sharing=locked \
     /opt/robotwin-env/bin/python -m pip install --no-build-isolation flash-attn==2.8.4
 
@@ -91,13 +92,13 @@ RUN git clone --recurse-submodules https://github.com/RoboTwin-Platform/RoboTwin
     /opt/robotwin-env/bin/python -m pip install --no-deps -e \
       /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/source/lingbot-vla-v2
 
-COPY configs/vla/robotwin/robotwin_8x4090.yaml \
-  /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/training/robotwin_8x4090.yaml
-COPY scripts/cuda4090/ /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/
-COPY docker/cuda4090/entrypoint.sh /usr/local/bin/robotwin-cuda-entrypoint
+COPY configs/vla/robotwin/robotwin_[48]x[45]090.yaml \
+  /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/training/
+COPY scripts/cuda-multigpu/ /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda-multigpu/
+COPY docker/cuda-multigpu/entrypoint.sh /usr/local/bin/robotwin-cuda-entrypoint
 
 RUN chmod 0755 /usr/local/bin/robotwin-cuda-entrypoint \
-      /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/*.sh && \
+      /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda-multigpu/*.sh && \
     rm -rf /RoboTwin/assets /RoboTwin/data /RoboTwin/eval_result \
       /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/models && \
     mkdir -p /models/robotwin-persistent /workspace/runtime/eval_result && \

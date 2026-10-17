@@ -1,0 +1,146 @@
+model:
+  model_path: /models/robotwin-persistent/models/robbyant_lingbot-vla-v2-6b
+  tokenizer_path: /models/robotwin-persistent/models/Qwen3-VL-4B-Instruct-config-tokenizer
+  post_training: true
+  adanorm_time: true
+  config_key: LingbotVLAV2Config
+  moe_implementation: fused
+
+data:
+  datasets_type: vla
+  data_name: multi
+  train_path: /models/robotwin-persistent/data/robotwin_clean_v30.txt
+  robot_config_root: /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/source/lingbot-vla-v2/configs/robot_configs
+  joints:
+    - arm.position: 14
+    - end.position: 14
+    - effector.position: 2
+  cameras:
+    - camera_top
+    - camera_wrist_left
+    - camera_wrist_right
+  prompt_type: global
+  norm_type:
+    - arm.position: bounds_99_woclip
+    - end.position: bounds_99_woclip
+    - effector.position: bounds_99_woclip
+  norm_stats_file: /models/robotwin-persistent/data/robotwin_clean.json
+  num_workers: 8
+  prefetch_factor: 2
+  use_future_image: true
+
+train:
+  output_dir: /workspace/runtime/outputs/robotwin_clean_8x4090
+  data_parallel_mode: fsdp2
+  data_parallel_replicate_size: 1
+  data_parallel_shard_size: 4
+  enable_full_shard: true
+  module_fsdp_enable: true
+  vlm_fsdp: true
+  enable_gradient_checkpointing: true
+  enable_mixed_precision: true
+  enable_fp32: false
+  enable_fsdp_offload: false
+  enable_activation_offload: true
+  activation_gpu_limit: 2.0
+  init_device: cuda
+  precompute_grid_thw: true
+  vlm_causal: true
+  attention_implementation: flex_cached
+  use_compile: false
+  use_moe: true
+  token_moe_layers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+  token_num_experts: 32
+  token_top_k: 4
+  token_moe_intermediate_size: 512
+  token_shared_intermediate_size: 704
+  bias_update_speed: 0
+  sequence_wise_mode: per_sequence
+  sequence_wise_loss_coeff: 0.001
+  router_z_loss_coeff: 0.0001
+  router_activation: sigmoid
+  routed_scaling_factor: 4.0
+  use_shared_expert_gate: false
+  use_moe_expert_lr: true
+  loss_type: L1_fm
+  action_dim: 55
+  max_action_dim: 55
+  max_state_dim: 55
+  freeze_vision_encoder: false
+  tokenizer_max_length: 72
+  optimizer: adamw
+  lr: 0.0001
+  lr_min: 0.00005
+  lr_decay_style: cosine
+  micro_batch_size: 1
+  gradient_accumulation_steps: 2
+  global_batch_size: 8
+  max_steps: 100
+  num_train_epochs: 29000
+  ckpt_manager: dcp
+  save_hf_weights: false
+  save_steps: 100
+  save_epochs: 29000
+  enable_resume: false
+  use_wandb: false
+  rmpad: false
+  rmpad_with_pos_ids: false
+  ulysses_parallel_size: 1
+  align_params:
+    mode: query
+    num_task_tokens: 8
+    depth_loss_weight: 0.004
+    future_depth_loss_weight: 0.004
+    use_future_video: true
+    llm:
+      dim_out: 2560
+      image_token_size: 8
+      image_input_size: 224
+    depth:
+      model_type: MoRGBD
+      moge_path: /models/robotwin-persistent/models/moge-2-vitb-normal/model.pt
+      morgbd_path: /models/robotwin-persistent/models/robbyant_lingbot-vla-v2-6b/depth/model.pt
+      num_layers: 1
+      num_heads: 4
+      dim_head: 32
+      ff_mult: 1
+      num_backbone_tokens: 256
+      token_size: 16
+      dim_out: 1024
+      input_size: 224
+      use_future_depth: true
+      block_future_depth_to_action: true
+      detach_future_image_feats: true
+    video:
+      ckpt_path: /models/robotwin-persistent/models/robbyant_lingbot-vla-v2-6b/dino_video/teacher_step_10000.pth
+      config_path: /models/robotwin-persistent/models/robbyant_lingbot-vla-v2-6b/dino_video/config.yaml
+      attention_mode: flex_block_causal
+      input_size: 256
+      block_suffix_to_future_video: true
+      share_future_depth_query: true
+      use_shared_future_task_proj: true
+      use_current_shared_task_proj: true
+      num_future_frames: 1
+      use_warmup_frame: true
+      effective_fps: 1.0
+      n_blocks: 1
+      cls_pool: last
+      detach_image_feats: true
+      num_layers: 1
+      num_heads: 4
+      dim_head: 32
+      ff_mult: 1
+      num_backbone_tokens: 256
+      dim_out: 1024
+      future_video_loss_weight: 0.004
+      use_smooth_l1_loss: false
+      use_mse_loss: true
+      mse_loss_weight: 1.0
+      use_patch_loss: true
+      use_current_patch_loss: true
+      use_cosine_loss: true
+      cosine_loss_weight: 0.2
+      use_cls_loss: false
+      log_max_samples: 32
+      log_scale: 16
+    visual_steps: 5000
