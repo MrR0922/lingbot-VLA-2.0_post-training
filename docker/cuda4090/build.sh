@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPOSITORY_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
-IMAGE_NAME="${IMAGE_NAME:-robotwin-lingbot-vla-v2:cuda12.8-py3.12-torch2.9.1-rtx5090}"
+IMAGE_NAME="${IMAGE_NAME:-robotwin-lingbot-vla-v2:cuda12.8-py3.12-torch2.9.1-rtx4090}"
 BASE_IMAGE="${BASE_IMAGE:-nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04}"
 
 build_args=(

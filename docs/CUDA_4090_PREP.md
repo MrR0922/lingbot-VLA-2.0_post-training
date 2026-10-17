@@ -1,4 +1,4 @@
-# LingBot-VLA 2.0 + RoboTwin clean-50 on 8×RTX 5090
+# LingBot-VLA 2.0 + RoboTwin clean-50 on 8×RTX 4090
 
 This setup is an NVIDIA CUDA 12.8 port of the pinned Radeon Cloud reproduction.
 It uses an external data layout so models, datasets, logs, and checkpoints do
@@ -6,7 +6,7 @@ not become Docker image layers.
 
 ## 1. Host prerequisites
 
-- Linux x86_64 with eight RTX 5090 GPUs.
+- Linux x86_64 with eight RTX 4090 GPUs, each in the 24 GB memory class.
 - NVIDIA driver 570 or newer.
 - Docker with NVIDIA Container Toolkit.
 - At least 500 GiB free under `/models/robotwin-persistent`.
@@ -15,7 +15,7 @@ Run:
 
 ```bash
 sudo mkdir -p /models/robotwin-persistent /workspace/robotwin-runtime
-bash scripts/cuda5090/host_check.sh
+bash scripts/cuda4090/host_check.sh
 ```
 
 ## 2. Verify and stage the clean-50 archives
@@ -23,7 +23,7 @@ bash scripts/cuda5090/host_check.sh
 On the machine containing the downloaded RoboTwin ZIPs:
 
 ```bash
-python3 scripts/cuda5090/prepare_clean50.py \
+python3 scripts/cuda4090/prepare_clean50.py \
   --archive-root /path/to/robotwin2_clean/dataset \
   --training-list assets/training_data/robotwin.txt \
   --output-manifest /tmp/clean50_archives.tsv \
@@ -42,8 +42,8 @@ creating LeRobot v3 datasets.
 ## 3. Build and start the container
 
 ```bash
-bash docker/cuda5090/build.sh
-bash docker/cuda5090/run.sh bash
+bash docker/cuda4090/build.sh
+bash docker/cuda4090/run.sh bash
 ```
 
 The image pins:
@@ -64,21 +64,21 @@ Inside the container:
 
 ```bash
 /opt/robotwin-env/bin/python \
-  /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/container_check.py
+  /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/container_check.py
 
 /opt/robotwin-env/bin/python -m torch.distributed.run \
   --standalone --nproc-per-node=8 \
-  /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/nccl_check.py
+  /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/nccl_check.py
 
-bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/download_models.sh
-bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/download_sim_assets.sh
+bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/download_models.sh
+bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/download_sim_assets.sh
 ```
 
 ## 5. Convert data and compute clean-only statistics
 
 ```bash
-bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/convert_clean50.sh
-bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/compute_norm_stats.sh
+bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/convert_clean50.sh
+bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/compute_norm_stats.sh
 ```
 
 Expected outputs:
@@ -97,30 +97,33 @@ Start with 20 steps:
 
 ```bash
 MAX_STEPS=20 SAVE_STEPS=20 \
-  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/smoke.sh
+  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/smoke.sh
 ```
 
 Then run 100 and 500 steps while checking per-GPU peak memory and step time:
 
 ```bash
 MAX_STEPS=100 SAVE_STEPS=100 \
-  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/train_8x5090.sh
+  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/train_8x4090.sh
 
 MAX_STEPS=500 SAVE_STEPS=500 \
   OUTPUT_DIR=/workspace/runtime/outputs/robotwin_clean_500steps \
-  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/train_8x5090.sh
+  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/train_8x4090.sh
 ```
 
 The baseline uses FSDP2 full shard, BF16, gradient checkpointing, AdamW,
 micro-batch 1, and global batch 8. Do not switch to Muon or Distributed Muon
 until the AdamW smoke run saves and restores a DCP checkpoint successfully.
+Because the 4090 has 24 GB rather than the originally planned 32 GB, the
+20-step smoke test is a hard gate: keep at least 1 GiB free per GPU. If it runs
+out of memory, enable activation offload before changing the dataset or model.
 
 To resume an existing output directory:
 
 ```bash
 ENABLE_RESUME=true OUTPUT_DIR=/workspace/runtime/outputs/robotwin_clean_500steps \
   MAX_STEPS=1000 SAVE_STEPS=500 \
-  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/train_8x5090.sh
+  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/train_8x4090.sh
 ```
 
 ## 7. Export and closed-loop evaluation
@@ -129,7 +132,7 @@ After a successful DCP save/restore test, convert the selected full-SFT DCP
 checkpoint into a deployable Hugging Face directory:
 
 ```bash
-bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/export_hf.sh \
+bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/export_hf.sh \
   /workspace/runtime/outputs/robotwin_clean_500steps \
   /workspace/runtime/outputs/robotwin_clean_500steps/<dcp-checkpoint> \
   /workspace/runtime/outputs/robotwin_clean_500steps/hf_ckpt
@@ -138,7 +141,7 @@ bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/export_hf
 Start the CUDA server on GPU 0 (do not use the copied Radeon launcher):
 
 ```bash
-bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/launch_server.sh \
+bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/launch_server.sh \
   0 13400 /workspace/runtime/outputs/logs/hf_server.log False \
   /workspace/runtime/outputs/robotwin_clean_500steps/hf_ckpt
 ```
@@ -149,7 +152,7 @@ fallback planner.
 
 ```bash
 TEST_NUM=10 DEVICE_ID=1 \
-  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda5090/eval_adjust_bottle.sh
+  bash /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda4090/eval_adjust_bottle.sh
 ```
 
 The server and simulator intentionally use different GPUs. Evaluation results

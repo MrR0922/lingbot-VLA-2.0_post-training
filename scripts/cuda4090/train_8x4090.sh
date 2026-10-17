@@ -2,12 +2,12 @@
 set -Eeuo pipefail
 
 SOURCE_DIR="${LINGBOT_VLA_SOURCE:-/RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/source/lingbot-vla-v2}"
-CONFIG="${CONFIG:-/RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/training/robotwin_8x5090.yaml}"
+CONFIG="${CONFIG:-/RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/training/robotwin_8x4090.yaml}"
 PYTHON="${PYTHON:-/opt/robotwin-env/bin/python}"
 GPU_IDS="${GPU_IDS:-0,1,2,3,4,5,6,7}"
 MAX_STEPS="${MAX_STEPS:-100}"
 SAVE_STEPS="${SAVE_STEPS:-${MAX_STEPS}}"
-OUTPUT_DIR="${OUTPUT_DIR:-/workspace/runtime/outputs/robotwin_clean_8x5090_${MAX_STEPS}steps}"
+OUTPUT_DIR="${OUTPUT_DIR:-/workspace/runtime/outputs/robotwin_clean_8x4090_${MAX_STEPS}steps}"
 OPTIMIZER="${OPTIMIZER:-adamw}"
 ENABLE_RESUME="${ENABLE_RESUME:-false}"
 

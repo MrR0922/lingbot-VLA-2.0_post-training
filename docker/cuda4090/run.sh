@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-IMAGE_NAME="${IMAGE_NAME:-robotwin-lingbot-vla-v2:cuda12.8-py3.12-torch2.9.1-rtx5090}"
+IMAGE_NAME="${IMAGE_NAME:-robotwin-lingbot-vla-v2:cuda12.8-py3.12-torch2.9.1-rtx4090}"
 PERSISTENT_ROOT="${PERSISTENT_ROOT:-/models/robotwin-persistent}"
 RUNTIME_ROOT="${RUNTIME_ROOT:-/workspace/robotwin-runtime}"
-CONTAINER_NAME="${CONTAINER_NAME:-robotwin-lingbot-cuda5090}"
+CONTAINER_NAME="${CONTAINER_NAME:-robotwin-lingbot-cuda4090}"
 
 mkdir -p "${RUNTIME_ROOT}"
 docker run --rm -it \

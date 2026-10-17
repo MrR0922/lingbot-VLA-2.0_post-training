@@ -30,7 +30,7 @@ data:
   use_future_image: true
 
 train:
-  output_dir: /workspace/runtime/outputs/robotwin_clean_8x5090
+  output_dir: /workspace/runtime/outputs/robotwin_clean_8x4090
   data_parallel_mode: fsdp2
   data_parallel_replicate_size: 1
   data_parallel_shard_size: 8

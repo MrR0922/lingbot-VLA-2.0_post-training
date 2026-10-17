@@ -12,8 +12,8 @@ assert tuple(map(int, torch.version.cuda.split(".")[:2])) >= (12, 8)
 
 for index in range(torch.cuda.device_count()):
     props = torch.cuda.get_device_properties(index)
-    assert props.major == 12 and props.minor == 0, (index, props.major, props.minor)
-    assert props.total_memory >= 30 * 1024**3, (index, props.total_memory)
+    assert props.major == 8 and props.minor == 9, (index, props.major, props.minor)
+    assert props.total_memory >= 22 * 1024**3, (index, props.total_memory)
 
 import flash_attn  # noqa: E402
 
