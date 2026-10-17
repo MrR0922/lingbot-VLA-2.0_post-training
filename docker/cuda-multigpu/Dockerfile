@@ -92,7 +92,7 @@ RUN git clone --recurse-submodules https://github.com/RoboTwin-Platform/RoboTwin
     /opt/robotwin-env/bin/python -m pip install --no-deps -e \
       /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/source/lingbot-vla-v2
 
-COPY configs/vla/robotwin/robotwin_[48]x[45]090.yaml \
+COPY configs/vla/robotwin/robotwin_[478]x[45]090.yaml \
   /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/training/
 COPY scripts/cuda-multigpu/ /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda-multigpu/
 COPY docker/cuda-multigpu/entrypoint.sh /usr/local/bin/robotwin-cuda-entrypoint

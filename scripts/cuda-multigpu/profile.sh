@@ -7,6 +7,10 @@ case "${PROFILE}" in
     GPU_COUNT=4; GPU_MODEL="RTX 4090"; GPU_CC="8.9"; GPU_MIN_GIB=22
     CUDA_ARCH_LIST="8.9+PTX"; GPU_SKU=4090; CONFIG_NAME="robotwin_4x4090.yaml"
     ;;
+  7x4090)
+    GPU_COUNT=7; GPU_MODEL="RTX 4090"; GPU_CC="8.9"; GPU_MIN_GIB=22
+    CUDA_ARCH_LIST="8.9+PTX"; GPU_SKU=4090; CONFIG_NAME="robotwin_7x4090.yaml"
+    ;;
   8x4090)
     GPU_COUNT=8; GPU_MODEL="RTX 4090"; GPU_CC="8.9"; GPU_MIN_GIB=22
     CUDA_ARCH_LIST="8.9+PTX"; GPU_SKU=4090; CONFIG_NAME="robotwin_8x4090.yaml"
@@ -20,7 +24,7 @@ case "${PROFILE}" in
     CUDA_ARCH_LIST="12.0+PTX"; GPU_SKU=5090; CONFIG_NAME="robotwin_8x5090.yaml"
     ;;
   *)
-    echo "Unknown PROFILE=${PROFILE}; choose 4x4090, 8x4090, 4x5090, or 8x5090" >&2
+    echo "Unknown PROFILE=${PROFILE}; choose 4x4090, 7x4090, 8x4090, 4x5090, or 8x5090" >&2
     return 2 2>/dev/null || exit 2
     ;;
 esac

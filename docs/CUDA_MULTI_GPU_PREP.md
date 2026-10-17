@@ -1,4 +1,4 @@
-# LingBot-VLA 2.0 + RoboTwin clean-50 on 4/8×RTX 4090/5090
+# LingBot-VLA 2.0 + RoboTwin clean-50 on 4/7/8×RTX 4090/5090
 
 This setup is an NVIDIA CUDA 12.8 port of the pinned Radeon Cloud reproduction.
 It uses an external data layout so models, datasets, logs, and checkpoints do
@@ -6,7 +6,7 @@ not become Docker image layers.
 
 ## 1. Host prerequisites
 
-- Linux x86_64 with 4 or 8 identical RTX 4090 (24 GB) or RTX 5090 (32 GB) GPUs.
+- Linux x86_64 with 4, 7, or 8 identical RTX 4090 (24 GB), or 4/8 RTX 5090 (32 GB) GPUs.
 - NVIDIA driver 570 or newer.
 - Docker with NVIDIA Container Toolkit.
 - At least 500 GiB free under `/models/robotwin-persistent`.
@@ -16,6 +16,7 @@ Select one profile for every command. The default is `4x4090`.
 | `PROFILE` | GPUs | FSDP shard | Grad accumulation | Global batch | Activation offload |
 | --- | ---: | ---: | ---: | ---: | --- |
 | `4x4090` | 4 | 4 | 2 | 8 | enabled |
+| `7x4090` | 7 | 7 | 1 | 7 | enabled |
 | `8x4090` | 8 | 8 | 1 | 8 | disabled |
 | `4x5090` | 4 | 4 | 2 | 8 | disabled |
 | `8x5090` | 8 | 8 | 1 | 8 | disabled |
@@ -55,7 +56,7 @@ PROFILE=4x4090 bash docker/cuda-multigpu/build.sh
 PROFILE=4x4090 bash docker/cuda-multigpu/run.sh bash
 ```
 
-The 4-card and 8-card profiles of the same GPU model share one image. Build
+The 4/7/8-card profiles of the same GPU model share one image. Build
 once for RTX 4090 and once for RTX 5090 only if both GPU types are used. The
 build selects FlashAttention code generation for Ada `sm_89` or Blackwell
 `sm_120`; do not reuse the 4090 image on a 5090 host or vice versa.
@@ -127,9 +128,10 @@ PROFILE=4x4090 MAX_STEPS=500 SAVE_STEPS=100 \
 The baseline uses FSDP2 full shard, BF16, gradient checkpointing, AdamW,
 micro-batch 1, and global batch 8. Do not switch to Muon or Distributed Muon
 until the AdamW smoke run saves and restores a DCP checkpoint successfully.
-The `4x4090` profile enables activation offload because it has both the smallest
-VRAM and the largest per-rank FSDP shard. Its 20-step smoke test is a hard gate:
-keep at least 1 GiB free per GPU. To switch hardware, change only `PROFILE`;
+The `4x4090` and experimental `7x4090` profiles enable activation offload for
+the 24 GB cards. The 7-card profile uses global batch 7 because no integer
+gradient accumulation can produce batch 8 from seven micro-batches. Its
+20-step smoke test is a hard gate: keep at least 1 GiB free per GPU. To switch hardware, change only `PROFILE`;
 the script selects GPU count, IDs, config, output directory, and image tag.
 
 To resume an existing output directory:
