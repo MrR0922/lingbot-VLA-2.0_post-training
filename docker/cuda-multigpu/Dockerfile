@@ -9,6 +9,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG CUDA_ARCH_LIST="8.9+PTX"
 ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=Asia/Shanghai \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_ROOT_USER_ACTION=ignore \
     CUDA_DEVICE_ORDER=PCI_BUS_ID \
@@ -35,11 +36,16 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
     apt-get update -qq && \
     apt-get install -y -qq --no-install-recommends \
-      ca-certificates git git-lfs curl wget ffmpeg unzip \
+      ca-certificates git git-lfs curl wget ffmpeg unzip tzdata \
       libgl1 libglib2.0-0 libvulkan1 vulkan-tools mesa-vulkan-drivers \
-      build-essential ninja-build cmake pkg-config openssh-client \
+      build-essential ninja-build cmake pkg-config openssh-client openssh-server \
       python3.12 python3.12-venv python3-pip && \
-    git lfs install --system
+    git lfs install --system && \
+    ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && \
+    echo "${TZ}" >/etc/timezone && \
+    mkdir -p /var/run/sshd && \
+    ssh-keygen -A && \
+    rm -rf /var/lib/apt/lists/*
 
 # The Radeon reproduction pins the integration dependencies and contains the
 # LeRobot/LoRA/path compatibility patches. Hardware-specific ROCm packages are
@@ -96,9 +102,14 @@ COPY configs/vla/robotwin/robotwin_[478]x[45]090.yaml \
   /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/training/
 COPY scripts/cuda-multigpu/ /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda-multigpu/
 COPY docker/cuda-multigpu/entrypoint.sh /usr/local/bin/robotwin-cuda-entrypoint
+COPY docker/cuda-multigpu/platformax/ssh/sshd_config /etc/ssh/sshd_config
+COPY docker/cuda-multigpu/platformax/ssh/ssh-start-chpasswd.sh /usr/sbin/ssh-start-chpasswd.sh
+COPY docker/cuda-multigpu/platformax/tini /tini
 
 RUN chmod 0755 /usr/local/bin/robotwin-cuda-entrypoint \
-      /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda-multigpu/*.sh && \
+      /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/scripts/cuda-multigpu/*.sh \
+      /tini && \
+    chmod 0500 /usr/sbin/ssh-start-chpasswd.sh && \
     rm -rf /RoboTwin/assets /RoboTwin/data /RoboTwin/eval_result \
       /RoboTwin/experiments/lingbot_vla_v2_6b_robotwin/models && \
     mkdir -p /models/robotwin-persistent /workspace/runtime/eval_result && \
@@ -118,5 +129,6 @@ print("torch", torch.__version__, "CUDA", torch.version.cuda, "flash-attn", flas
 PY
 
 WORKDIR /RoboTwin
-ENTRYPOINT ["/usr/local/bin/robotwin-cuda-entrypoint"]
-CMD ["bash"]
+EXPOSE 22
+ENTRYPOINT ["/tini", "--", "/usr/local/bin/robotwin-cuda-entrypoint"]
+CMD ["/usr/sbin/ssh-start-chpasswd.sh"]

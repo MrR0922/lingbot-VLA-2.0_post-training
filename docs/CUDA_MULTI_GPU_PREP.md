@@ -61,6 +61,30 @@ once for RTX 4090 and once for RTX 5090 only if both GPU types are used. The
 build selects FlashAttention code generation for Ada `sm_89` or Blackwell
 `sm_120`; do not reuse the 4090 image on a 5090 host or vice versa.
 
+### PlatforMAX Terminal compatibility
+
+The image includes the platform-provided static `tini` binary, OpenSSH server,
+port 22, and a compatible root-password startup command. Its process chain is:
+
+```text
+/tini -> robotwin-cuda-entrypoint -> ssh-start-chpasswd.sh -> sshd -D
+```
+
+PlatforMAX supplies `PASSWORD` when it creates a Terminal executor. The startup
+script consumes it without printing the password. When building outside the
+platform, `run.sh bash` overrides the default SSH command and still opens a
+local shell normally. The Docker build context must be the repository root;
+uploading only the Dockerfile is insufficient because it also copies configs,
+training scripts, `tini`, and the SSH files.
+
+For a platform registry, tag the image in the required namespace, for example:
+
+```bash
+PROFILE=7x4090 \
+IMAGE_NAME=registry.cluster.local/user_<username>/lingbot-vla:cuda128-4090 \
+bash docker/cuda-multigpu/build.sh
+```
+
 The image pins:
 
 - CUDA 12.8.1, Ubuntu 24.04, Python 3.12;
