@@ -38,8 +38,17 @@ case "${ACTION}" in
     hf_output="${3:-${checkpoint}/hf_ckpt}"
     "${SCRIPT_DIR}/export_hf.sh" "${OUTPUT_DIR}" "${checkpoint}" "${hf_output}"
     ;;
+  audit-update)
+    before="${2:?usage: checkpoint.sh audit-update BEFORE_MODEL AFTER_HF [REPORT]}"
+    after="${3:?usage: checkpoint.sh audit-update BEFORE_MODEL AFTER_HF [REPORT]}"
+    report="${4:-${OUTPUT_DIR}/checkpoint_update_audit.json}"
+    "${PYTHON:-/opt/robotwin-env/bin/python}" "${SCRIPT_DIR}/audit_hf_update.py" \
+      --before "${before}" \
+      --after "${after}" \
+      --report "${report}"
+    ;;
   *)
-    echo "usage: checkpoint.sh {list|latest|verify|export-hf} [checkpoint] [hf-output]" >&2
+    echo "usage: checkpoint.sh {list|latest|verify|export-hf|audit-update} ..." >&2
     exit 2
     ;;
 esac
