@@ -12,6 +12,9 @@ RUNTIME_ROOT="${RUNTIME_ROOT:-/workspace/runtime}"
 LOG_ROOT="${LOG_ROOT:-${RUNTIME_ROOT}/outputs/logs}"
 STATUS_FILE="${STATUS_FILE:-${RUNTIME_ROOT}/pipeline.status}"
 PYTHON="${PYTHON:-/opt/robotwin-env/bin/python}"
+FLASH_ATTN_VERSION="${FLASH_ATTN_VERSION:-2.8.3.post2}"
+FLASH_ATTN_CUDA_ARCHS="${FLASH_ATTN_CUDA_ARCHS:-80}"
+FLASH_ATTN_MAX_JOBS="${FLASH_ATTN_MAX_JOBS:-4}"
 MODEL_ROOT="/models/robotwin-persistent/models"
 DATA_ROOT="/models/robotwin-persistent/data"
 SMOKE_OUTPUT="${SMOKE_OUTPUT:-${RUNTIME_ROOT}/outputs/smoke_${PROFILE}}"
@@ -43,9 +46,9 @@ wait_for_pid cuda-toolkit "${CUDA_SETUP_PID}"
 run_logged flash-attn-install env \
   CUDA_HOME=/usr/local/cuda-12.8 \
   PATH=/usr/local/cuda-12.8/bin:/opt/robotwin-env/bin:/usr/bin:/bin \
-  TORCH_CUDA_ARCH_LIST=8.9+PTX \
-  MAX_JOBS=16 \
-  "${PYTHON}" -m pip install --no-build-isolation flash-attn==2.8.4
+  FLASH_ATTN_CUDA_ARCHS="${FLASH_ATTN_CUDA_ARCHS}" \
+  MAX_JOBS="${FLASH_ATTN_MAX_JOBS}" \
+  "${PYTHON}" -m pip install --no-build-isolation "flash-attn==${FLASH_ATTN_VERSION}"
 
 wait_for_pid model-download "${MODEL_DOWNLOAD_PID}"
 for required in \
