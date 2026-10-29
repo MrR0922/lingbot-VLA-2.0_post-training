@@ -41,12 +41,16 @@ def main() -> int:
     parser.add_argument("--after", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--require-pattern", default="qwen_expert")
+    parser.add_argument("--include-pattern", default="")
+    parser.add_argument("--require-all-unchanged", action="store_true")
     parser.add_argument("--sample-limit", type=int, default=50)
     args = parser.parse_args()
 
     before = tensor_map(args.before)
     after = tensor_map(args.after)
     common = sorted(before.keys() & after.keys())
+    if args.include_pattern:
+        common = [name for name in common if args.include_pattern in name]
     if not common:
         raise RuntimeError("the two checkpoints have no common tensor names")
 
@@ -98,6 +102,10 @@ def main() -> int:
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
 
+    if args.require_all_unchanged:
+        if changed:
+            raise RuntimeError(f"{changed} tensors changed but all were required to stay frozen")
+        return 0
     if changed == 0:
         raise RuntimeError("no floating-point model tensor changed")
     if args.require_pattern and changed_required == 0:

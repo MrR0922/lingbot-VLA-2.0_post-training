@@ -1,0 +1,95 @@
+bash: warning: setlocale: LC_ALL: cannot change locale (en_US.UTF-8)
+[36mSim workdir: /opt/data/private/lingbot-vla-v2/code/RoboTwin[0m
+[36mSim-side python (robotwin): /opt/robotwin-env/bin/python (Python 3.12.3)[0m
+[36mTasks this run (11): put_object_cabinet adjust_bottle dump_bin_bigbin move_can_pot place_dual_shoes place_object_scale open_laptop pick_diverse_bottles place_bread_skillet shake_bottle_horizontally shake_bottle[0m
+[36mInference config: 7 GPU x 1 servers/GPU = 7 slots[0m
+[36mRun directory: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226[0m
+[32m========== Starting inference side: 7 QwenPi servers, ports 9330~9336 ==========[0m
+[33m[inf slot 0] GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_logs/qwenpi_slot0_gpu0_port9330.log[0m
+[33m[inf slot 1] GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_logs/qwenpi_slot1_gpu1_port9331.log[0m
+[33m[inf slot 2] GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_logs/qwenpi_slot2_gpu2_port9332.log[0m
+[33m[inf slot 3] GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_logs/qwenpi_slot3_gpu3_port9333.log[0m
+[33m[inf slot 4] GPU: 4, PORT: 9334, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_logs/qwenpi_slot4_gpu4_port9334.log[0m
+[33m[inf slot 5] GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_logs/qwenpi_slot5_gpu5_port9335.log[0m
+[33m[inf slot 6] GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_logs/qwenpi_slot6_gpu6_port9336.log[0m
+[32m7 inference servers started, PIDs saved to /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_pids.txt[0m
+[36mWaiting for all inference ports to become ready...[0m
+[32mAll inference ports ready.[0m
+[32m========== Starting sim side (queue-scheduled, 7 concurrent slots) ==========[0m
+[33m  [launch] put_object_cabinet -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/put_object_cabinet.log) [attempt 1/3][0m
+[33m  [launch] adjust_bottle -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/adjust_bottle.log) [attempt 1/3][0m
+[33m  [launch] dump_bin_bigbin -> slot 2 (GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/dump_bin_bigbin.log) [attempt 1/3][0m
+[33m  [launch] move_can_pot -> slot 3 (GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/move_can_pot.log) [attempt 1/3][0m
+[33m  [launch] place_dual_shoes -> slot 4 (GPU: 4, PORT: 9334, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/place_dual_shoes.log) [attempt 1/3][0m
+[33m  [launch] place_object_scale -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/place_object_scale.log) [attempt 1/3][0m
+[33m  [launch] open_laptop -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/open_laptop.log) [attempt 1/3][0m
+[31m  [fail] dump_bin_bigbin slot 2 took 3674s exit=143, retrying on this slot (1/3)[0m
+[33m  [launch] dump_bin_bigbin -> slot 2 (GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/dump_bin_bigbin.log) [attempt 2/3][0m
+[32m  [done] move_can_pot slot 3 took 5494s (progress 1/11)[0m
+[33m  [launch] pick_diverse_bottles -> slot 3 (GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/pick_diverse_bottles.log) [attempt 1/3][0m
+[32m  [done] adjust_bottle slot 1 took 6271s (progress 2/11)[0m
+[33m  [launch] place_bread_skillet -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/place_bread_skillet.log) [attempt 1/3][0m
+[32m  [done] place_object_scale slot 5 took 6472s (progress 3/11)[0m
+[33m  [launch] shake_bottle_horizontally -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/shake_bottle_horizontally.log) [attempt 1/3][0m
+[32m  [done] place_dual_shoes slot 4 took 8918s (progress 4/11)[0m
+[33m  [launch] shake_bottle -> slot 4 (GPU: 4, PORT: 9334, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/shake_bottle.log) [attempt 1/3][0m
+[31m  [fail] shake_bottle slot 4 took 2452s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] shake_bottle -> slot 4 (GPU: 4, PORT: 9334, Log: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/shake_bottle.log) [attempt 2/3][0m
+[32m  [done] pick_diverse_bottles slot 3 took 6678s (progress 5/11)[0m
+[36m  [release] slot 3 inference server (PID: 192119) stopped, remaining: 6[0m
+[32m  [done] dump_bin_bigbin slot 2 took 8824s (progress 6/11)[0m
+[36m  [release] slot 2 inference server (PID: 192115) stopped, remaining: 5[0m
+[32m  [done] open_laptop slot 6 took 12583s (progress 7/11)[0m
+[36m  [release] slot 6 inference server (PID: 192131) stopped, remaining: 4[0m
+[32m  [done] shake_bottle_horizontally slot 5 took 6322s (progress 8/11)[0m
+[36m  [release] slot 5 inference server (PID: 192127) stopped, remaining: 3[0m
+[32m  [done] put_object_cabinet slot 0 took 13059s (progress 9/11)[0m
+[36m  [release] slot 0 inference server (PID: 192107) stopped, remaining: 2[0m
+[32m  [done] place_bread_skillet slot 1 took 8127s (progress 10/11)[0m
+[36m  [release] slot 1 inference server (PID: 192111) stopped, remaining: 1[0m
+[32m  [done] shake_bottle slot 4 took 5930s (progress 11/11)[0m
+[36m  [release] slot 4 inference server (PID: 192123) stopped, remaining: 0[0m
+[32m========== All sim tasks done, total 17305s ==========[0m
+[36mGenerating stats file: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/stats.txt[0m
+============================================
+  Eval Result Stats
+  Time: 2026-10-29 17:32:42
+  Model: robotwin_clean_expert_heads_7x4090_formal_16k
+  Model path: /workspace/runtime/outputs/robotwin_clean_expert_heads_7x4090_formal/checkpoints/global_step_16100/hf_ckpt
+  Tasks: 11
+  Task Config: demo_clean
+  Inference: 7 GPU x 1/GPU = 7 slots
+  Result: 11 done, 0 skipped
+============================================
+
+Task                           Time(s)    Done(100)    Success/Total Rate      
+--------------------------------------------------------------------------------
+move_can_pot                   5494       YES          19/100     19.0%     
+adjust_bottle                  6271       YES          0/100      0.0%      
+place_object_scale             6472       YES          0/100      0.0%      
+place_dual_shoes               8918       YES          0/100      0.0%      
+pick_diverse_bottles           6678       YES          0/100      0.0%      
+dump_bin_bigbin                8824       YES          0/100      0.0%      
+open_laptop                    12583      YES          15/100     15.0%     
+shake_bottle_horizontally      6322       YES          41/100     41.0%     
+put_object_cabinet             13059      YES          0/100      0.0%      
+place_bread_skillet            8127       YES          0/100      0.0%      
+shake_bottle                   5930       YES          45/100     45.0%     
+--------------------------------------------------------------------------------
+Summary: total 17305s, success 120/1100, overall rate 10.9%
+All tasks fully executed 100 episodes
+============================================
+[36m========== Stopping remaining inference servers ==========[0m
+[32mAll inference servers stopped[0m
+
+[32m========== All done ==========[0m
+Run dir: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226
+Stats file: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/stats.txt
+Inference logs: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_logs/
+Sim logs: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_logs/
+Eval results & videos: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_results/
+Inference PIDs: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/inference_pids.txt (stopped)
+Sim PIDs: /workspace/runtime/outputs/eval_step16100_official50_repair11_20261029/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261029_124226/eval_pids.txt
+
+[33m=== Cleaning up all child processes ===[0m
+[33m=== Cleanup done ===[0m

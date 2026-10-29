@@ -1,0 +1,443 @@
+diff --git a/deploy/lingbot_vla_v2_policy.py b/deploy/lingbot_vla_v2_policy.py
+index 96b9acb..5282667 100644
+--- a/deploy/lingbot_vla_v2_policy.py
++++ b/deploy/lingbot_vla_v2_policy.py
+@@ -224,6 +224,18 @@ class LingbotVLAv2Server:
+         self.use_fp32 = use_fp32
+         self.action_key: str= "action"
+ 
++    @staticmethod
++    def _is_training_alignment_key(key: str) -> bool:
++        """Identify teacher-only alignment weights absent from inference policy."""
++        return key.startswith((
++            "model.current_video_align_",
++            "model.depth_align_",
++            "model.future_depth_align_",
++            "model.future_video_align_",
++            "model.current_shared_task_proj",
++            "model.future_shared_task_proj",
++        ))
++
+     def load_model_weights(self, path_to_pi_model, strict=True):
+         all_safetensors = glob(os.path.join(path_to_pi_model, "*.safetensors"))
+         merged_weights = {}
+@@ -232,6 +244,26 @@ class LingbotVLAv2Server:
+             with safe_open(file_path, framework="pt", device="cpu") as f:
+                 for key in f.keys():
+                     merged_weights[key] = f.get_tensor(key)
++        inference_keys = set(self.vla.state_dict())
++        training_only_keys = {
++            key for key in merged_weights
++            if key not in inference_keys and self._is_training_alignment_key(key)
++        }
++        unexpected_keys = set(merged_weights) - inference_keys - training_only_keys
++        if unexpected_keys:
++            raise RuntimeError(
++                "Unexpected checkpoint keys not understood by inference model: "
++                + ", ".join(sorted(unexpected_keys))
++            )
++        if training_only_keys:
++            print(
++                f"Ignoring {len(training_only_keys)} full-SFT training-only "
++                "alignment weights during inference"
++            )
++            merged_weights = {
++                key: value for key, value in merged_weights.items()
++                if key not in training_only_keys
++            }
+         self.vla.load_state_dict(merged_weights, strict=strict)
+ 
+     def merge_qwen_config(self, qwen_config):
+@@ -273,7 +305,21 @@ class LingbotVLAv2Server:
+         print(f"loading model from: {path_to_pi_model}")
+         
+         # load training config
+-        training_config_path = Path(path_to_pi_model).parent.parent.parent/'lingbotvla_cli.yaml'
++        configured_path = os.environ.get('LINGBOTVLA_TRAINING_CONFIG')
++        experiment_root = Path(__file__).resolve().parents[3]
++        candidate_paths = [
++            Path(configured_path) if configured_path else None,
++            Path(path_to_pi_model) / 'lingbotvla_cli.yaml',
++            Path(path_to_pi_model).parent.parent.parent / 'lingbotvla_cli.yaml',
++            experiment_root / 'training/lingbotvla_cli.yaml',
++        ]
++        training_config_path = next(
++            (candidate for candidate in candidate_paths if candidate and candidate.is_file()),
++            None,
++        )
++        if training_config_path is None:
++            searched = ', '.join(str(candidate) for candidate in candidate_paths if candidate)
++            raise FileNotFoundError(f'No LingBot-VLA training config found; searched: {searched}')
+         with open(training_config_path, 'r') as f:
+             training_config = yaml.safe_load(f)
+         f.close()
+@@ -288,6 +334,9 @@ class LingbotVLAv2Server:
+ 
+         # Set attention_implementation to 'eager' to speed up evaluation.
+         config.attention_implementation = 'eager'
++        # The official checkpoint enables a single-shape ViT cache. Disable it
++        # for the websocket server so one process can serve variable env batches.
++        config.precompute_grid_thw = False
+         
+         # set base model according to training config
+         training_base_model = training_config['model']['tokenizer_path']
+diff --git a/experiment/robotwin/eval_policy_client_lingbotvla.py b/experiment/robotwin/eval_policy_client_lingbotvla.py
+index 371445f..00e7d4d 100644
+--- a/experiment/robotwin/eval_policy_client_lingbotvla.py
++++ b/experiment/robotwin/eval_policy_client_lingbotvla.py
+@@ -74,7 +74,10 @@ def main(usr_args):
+     video_size = None
+     video_fps = str(usr_args.get("video_fps", 10))
+ 
+-    get_model = eval_function_decorator(policy_name, "get_model")
++    # This evaluator always uses the websocket client below. Importing a local
++    # policy implementation is obsolete and prevents remote-only policies from
++    # starting when their package does not expose get_model.
++    get_model = None
+ 
+     with open(f"./task_config/{task_config}.yml", "r", encoding="utf-8") as f:
+         args = yaml.load(f.read(), Loader=yaml.FullLoader)
+@@ -213,7 +216,7 @@ def eval_policy(task_name,
+     print(f"\033[34mTask Name: {args['task_name']}\033[0m")
+     print(f"\033[34mPolicy Name: {args['policy_name']}\033[0m")
+ 
+-    expert_check = True
++    expert_check = False
+     TASK_ENV.suc = 0
+     TASK_ENV.test_num = 0
+ 
+@@ -259,6 +262,10 @@ def eval_policy(task_name,
+                 print(f"error occurs ! {e}")
+                 continue
+ 
++        if not expert_check:
++            TASK_ENV.setup_demo(now_ep_num=now_id, seed=now_seed, is_test=True, **args)
++            episode_info = TASK_ENV.info
++
+         if (not expert_check) or (TASK_ENV.plan_success and TASK_ENV.check_success()):
+             succ_seed += 1
+             suc_test_seed_list.append(now_seed)
+@@ -272,7 +279,13 @@ def eval_policy(task_name,
+         TASK_ENV.setup_demo(now_ep_num=now_id, seed=now_seed, is_test=True, **args)
+         episode_info_list = [episode_info["info"]]
+         results = generate_episode_descriptions(args["task_name"], episode_info_list, test_num)
+-        instruction = np.random.choice(results[0][instruction_type])
++        if results and results[0].get(instruction_type):
++            instruction = np.random.choice(results[0][instruction_type])
++        else:
++            task_templates = load_task_instructions(args["task_name"]).get(instruction_type, [])
++            if not task_templates:
++                raise RuntimeError("No {} task instruction template for {}".format(instruction_type, args["task_name"]))
++            instruction = replace_placeholders(task_templates[0], episode_info["info"])
+         TASK_ENV.set_instruction(instruction=instruction)  # set language instruction
+ 
+         if TASK_ENV.eval_video_path is not None:
+diff --git a/experiment/robotwin/start_robotwin_infer_and_eval.sh b/experiment/robotwin/start_robotwin_infer_and_eval.sh
+index f32d8e5..0c41ca7 100755
+--- a/experiment/robotwin/start_robotwin_infer_and_eval.sh
++++ b/experiment/robotwin/start_robotwin_infer_and_eval.sh
+@@ -277,6 +277,31 @@ done
+ 
+ echo -e "\033[32m${num_slots} inference servers started, PIDs saved to ${inference_pid_file}\033[0m"
+ 
++# Loading all HF shards can take several minutes. Do not consume task retries
++# until every websocket server is actually accepting connections.
++echo -e "\033[36mWaiting for all inference ports to become ready...\033[0m"
++for slot in $(seq 0 $((num_slots-1))); do
++    port=$(( start_port + slot ))
++    ready=false
++    for attempt in $(seq 1 180); do
++        if (echo > "/dev/tcp/127.0.0.1/${port}") 2>/dev/null; then
++            ready=true
++            break
++        fi
++        pid=$(sed -n "$((slot+1))p" "$inference_pid_file")
++        if ! kill -0 "$pid" 2>/dev/null; then
++            echo -e "\033[31mInference server on port ${port} exited before becoming ready.\033[0m"
++            exit 1
++        fi
++        sleep 5
++    done
++    if [ "$ready" != true ]; then
++        echo -e "\033[31mTimeout waiting for inference server on port ${port}.\033[0m"
++        exit 1
++    fi
++done
++echo -e "\033[32mAll inference ports ready.\033[0m"
++
+ # Record each slot's inference server PID for on-demand shutdown
+ declare -a inference_pids=()
+ for slot in $(seq 0 $((num_slots-1))); do
+@@ -414,7 +439,7 @@ launch_task() {
+     PYTHONWARNINGS=ignore::UserWarning \
+     XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 \
+     SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 \
+-    setsid bash -c "source ${conda_sh} && conda activate ${sim_env} && export PYTHONPATH=\"\$(python -c 'import site;print(site.getsitepackages()[0])')\${PYTHONPATH:+:\$PYTHONPATH}\" && PYTHONUNBUFFERED=1 PYTHONWARNINGS=ignore::UserWarning XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 python -u ${eval_client_dst} --config policy/${policy_name}/deploy_policy.yml \
++    setsid bash -c "source ${conda_sh} && conda activate ${sim_env} && export PYTHONPATH=\"\$(python -c 'import site;print(site.getsitepackages()[0])')\${PYTHONPATH:+:\$PYTHONPATH}\" && ROBOTWIN_DISABLE_CUROBO=1 PYTHONUNBUFFERED=1 PYTHONWARNINGS=ignore::UserWarning XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 python -u ${eval_client_dst} --config policy/${policy_name}/deploy_policy.yml \
+         --overrides \
+         --task_name ${task_name} \
+         --task_config ${task_config} \
+diff --git a/lingbotvla/data/vla_data/base_dataset.py b/lingbotvla/data/vla_data/base_dataset.py
+index 71d62a0..30f121f 100644
+--- a/lingbotvla/data/vla_data/base_dataset.py
++++ b/lingbotvla/data/vla_data/base_dataset.py
+@@ -24,7 +24,11 @@ from torchvision.transforms.v2 import Resize
+ try:
+     from lerobot.datasets.lerobot_dataset import LeRobotDataset as BaseLeRobotDataset
+     from lerobot.datasets.lerobot_dataset import LeRobotDatasetMetadata
+-    from lerobot.datasets.utils import hf_transform_to_torch
++    try:
++        from lerobot.datasets.utils import hf_transform_to_torch
++    except ImportError:
++        # LeRobot 0.6 keeps the transform with the dataset reader.
++        from lerobot.datasets.dataset_reader import hf_transform_to_torch
+     LEROBOT_DATASET_API = "v3"
+ except ImportError:
+     from lerobot.common.datasets.lerobot_dataset import LeRobotDataset as BaseLeRobotDataset
+@@ -121,6 +125,11 @@ class LeRobotDataset(BaseLeRobotDataset):
+         return item
+ 
+     def __getitem__(self, idx) -> dict:
++        # LeRobot 0.6 moved delta-indexing and video decoding into
++        # DatasetReader. Reuse that implementation for v3 datasets instead of
++        # relying on the pre-0.6 attributes formerly exposed on the dataset.
++        if LEROBOT_DATASET_API == "v3" and hasattr(self, "_ensure_reader"):
++            return self._ensure_reader().get_item(idx)
+         # Ensure dataset is loaded when we actually need to read from it
+         item = self.hf_dataset[idx]
+         ep_idx = item["episode_index"].item()
+@@ -209,6 +218,7 @@ class VLADataset(Dataset):
+             repo_id=repo_id,
+             image_transforms=Resize(image_size),
+             delta_timestamps=merged_delta,
++            video_backend="pyav",
+             load_image=load_image
+         )
+ 
+diff --git a/lingbotvla/data/vla_data/multi_vla_dataset.py b/lingbotvla/data/vla_data/multi_vla_dataset.py
+index e6f0e14..4ba24e5 100644
+--- a/lingbotvla/data/vla_data/multi_vla_dataset.py
++++ b/lingbotvla/data/vla_data/multi_vla_dataset.py
+@@ -1,3 +1,5 @@
++import os
++from pathlib import Path
+ from typing import Callable
+ import numpy as np
+ from lingbotvla.utils import helper
+@@ -26,6 +28,19 @@ def get_all_tasks(task_files, sep=' '):
+                 if not line:
+                     continue
+                 data_name, task = line.split(sep)
++                task_path = Path(task).expanduser()
++                if not task_path.exists():
++                    try:
++                        relative_path = task_path.relative_to("/workspace/RoboTwin")
++                    except ValueError:
++                        pass
++                    else:
++                        relocated_path = (
++                            Path(os.environ.get("ROBOTWIN_ROOT", "/RoboTwin"))
++                            / relative_path
++                        )
++                        if relocated_path.exists():
++                            task = str(relocated_path)
+                 data_names.append(data_name)
+                 task_list.append(task)
+         f.close()
+diff --git a/lingbotvla/data/vla_data/utils.py b/lingbotvla/data/vla_data/utils.py
+index 1daf261..e957e0e 100644
+--- a/lingbotvla/data/vla_data/utils.py
++++ b/lingbotvla/data/vla_data/utils.py
+@@ -86,6 +86,11 @@ class FeatureTransform:
+ 
+         if norm_stats_path is None:
+             norm_stats_path = robot_config.pop('norm_stats')
++            if not os.path.isabs(norm_stats_path):
++                repository_root = os.path.abspath(
++                    os.path.join(os.path.dirname(__file__), "../../..")
++                )
++                norm_stats_path = os.path.join(repository_root, norm_stats_path)
+         else:
+             robot_config.pop('norm_stats')
+ 
+diff --git a/lingbotvla/models/vla/lingbot_vla/modeling_lingbot_vla_v2.py b/lingbotvla/models/vla/lingbot_vla/modeling_lingbot_vla_v2.py
+index 44ccf04..e48d807 100644
+--- a/lingbotvla/models/vla/lingbot_vla/modeling_lingbot_vla_v2.py
++++ b/lingbotvla/models/vla/lingbot_vla/modeling_lingbot_vla_v2.py
+@@ -127,14 +127,14 @@ class QwenvlWithExpertV2Model(PreTrainedModel):
+         vlm_config = AutoConfig.from_pretrained(self.config.tokenizer_path)
+         if self.config.vocab_size not in (0, 257152):
+             vlm_config.text_config.vocab_size = self.config.vocab_size
+-        vlm_config._attn_implementation = "flash_attention_2"
+-        vlm_config.text_config._attn_implementation = "flash_attention_2"
++        vlm_config._attn_implementation = "eager"
++        vlm_config.text_config._attn_implementation = "eager"
+         vlm_config.vision_config._attn_implementation = self.config.vit_attn_implementation
+         self.qwenvl = Qwen3VLForConditionalGeneration._from_config(vlm_config)
+         if self.config.use_lm_head:
+             self.qwenvl.tie_weights()
+ 
+-        self.config.qwen_expert_config._attn_implementation = "flash_attention_2"
++        self.config.qwen_expert_config._attn_implementation = "eager"
+         self.qwen_expert = Qwen2ForCausalLM._from_config(self.config.qwen_expert_config, eval=eval)
+ 
+         if getattr(self.config, "adanorm_time", False):
+diff --git a/lingbotvla/utils/arguments.py b/lingbotvla/utils/arguments.py
+index 4b8c495..6413247 100644
+--- a/lingbotvla/utils/arguments.py
++++ b/lingbotvla/utils/arguments.py
+@@ -939,8 +939,10 @@ def parse_args(rootclass: T) -> T:
+     for base, arg_dict in input_data.items():
+         for arg_name, arg_value in arg_dict.items():
+             if f"--{base}.{arg_name}=" not in cmd_args_string:  # lower priority
+-                # Skip list fields with None values to use default
+-                if f"{base}.{arg_name}" in list_fields and arg_value is None:
++                # Keep dataclass defaults for YAML nulls and empty lists. Passing
++                # them through argparse turns null into the string "null" and
++                # emits a list flag without values, respectively.
++                if arg_value is None or (f"{base}.{arg_name}" in list_fields and not arg_value):
+                     continue
+ 
+                 cmd_args.append(f"--{base}.{arg_name}")
+diff --git a/lingbotvla/utils/lora_utils.py b/lingbotvla/utils/lora_utils.py
+index ac16fdc..e974935 100644
+--- a/lingbotvla/utils/lora_utils.py
++++ b/lingbotvla/utils/lora_utils.py
+@@ -39,16 +39,27 @@ def add_lora_to_model(
+     if init_lora_weights == "kaiming":
+         init_lora_weights = True
+ 
++    # PEFT treats a string as a full regular expression and a list as suffix
++    # matches.  Keep both forms available so callers can constrain adapters to
++    # one branch of a multi-tower VLA model (for example qwen_expert only).
++    target_modules = (
++        lora_target_modules
++        if isinstance(lora_target_modules, str) and lora_target_modules.startswith(".*")
++        else [item.strip() for item in lora_target_modules.split(",") if item.strip()]
++        if isinstance(lora_target_modules, str)
++        else lora_target_modules
++    )
+     lora_config = LoraConfig(
+         r=lora_rank,
+         lora_alpha=lora_alpha,
+         init_lora_weights=init_lora_weights,
+-        target_modules=lora_target_modules.split(","),
++        target_modules=target_modules,
+     )
+ 
+-    for lora_target_module in lora_config.target_modules:
+-        if lora_target_module not in lora_target_modules_support:
+-            raise ValueError(f"lora_target_module {lora_target_module} not in lora_target_modules_support")
++    if lora_target_modules_support is not None and not isinstance(target_modules, str):
++        for lora_target_module in target_modules:
++            if lora_target_module not in lora_target_modules_support:
++                raise ValueError(f"lora_target_module {lora_target_module} not in lora_target_modules_support")
+ 
+     model = inject_adapter_in_model(lora_config, model)
+     for param in model.parameters():
+@@ -71,6 +82,7 @@ def add_lora_to_model(
+         print(
+             f"{num_updated_keys} parameters are loaded from {pretrained_lora_path}. {num_unexpected_keys} parameters are unexpected."
+         )
++    return model
+ 
+ 
+ def load_state_dict(file_path, torch_dtype=None):
+diff --git a/tasks/vla/train_lingbotvla.py b/tasks/vla/train_lingbotvla.py
+index a4427fe..d5feff0 100644
+--- a/tasks/vla/train_lingbotvla.py
++++ b/tasks/vla/train_lingbotvla.py
+@@ -35,6 +35,7 @@ from lingbotvla.utils import helper
+ from lingbotvla.utils.async_hf_checkpoint import AsyncHFCheckpointSaver
+ from lingbotvla.utils.arguments import EvalArguments, DataArguments, ModelArguments, TrainingArguments, parse_args, save_args
+ from lingbotvla.utils.dist_utils import all_reduce
++from lingbotvla.utils.lora_utils import add_lora_to_model, freeze_parameters
+ from lingbotvla.models.config_registry import get_config_registry
+ 
+ from lingbotvla.models.vla.vision_models.module_utils import (
+@@ -117,6 +118,20 @@ def get_moe_param_groups(model: "torch.nn.Module", args_train) -> Optional[List[
+ 
+ @dataclass
+ class MyTrainingArguments(TrainingArguments):
++    use_lora: bool = field(
++        default=False,
++        metadata={"help": "Train PEFT LoRA adapters instead of full model weights."},
++    )
++    lora_rank: int = field(default=8, metadata={"help": "LoRA rank."})
++    lora_alpha: int = field(default=16, metadata={"help": "LoRA alpha."})
++    lora_scope: Literal["action_expert", "all_attention"] = field(
++        default="action_expert",
++        metadata={"help": "Apply LoRA to action expert attention or all attention layers."},
++    )
++    lora_target_modules: str = field(
++        default="q_proj,k_proj,v_proj,o_proj",
++        metadata={"help": "Comma-separated attention projection module names."},
++    )
+     freeze_vit: bool = field(
+         default=False,
+         metadata={"help": "Whether or not to freeze the vit parameters."},
+@@ -378,6 +393,31 @@ def main():
+         config_kwargs=config_kwargs,
+         moe_implementation=getattr(args.model, 'moe_implementation', None),
+     )
++    if args.train.use_lora:
++        if args.train.train_expert_only:
++            raise ValueError("use_lora=true requires train_expert_only=false; LoRA freezes base weights itself.")
++        freeze_parameters(model)
++        if args.train.lora_scope == "action_expert":
++            target_pattern = (
++                r".*qwenvl_with_expert\.qwen_expert\..*\."
++                r"(q_proj|k_proj|v_proj|o_proj)"
++            )
++        else:
++            target_pattern = args.train.lora_target_modules
++        model = add_lora_to_model(
++            model,
++            lora_rank=args.train.lora_rank,
++            lora_alpha=args.train.lora_alpha,
++            lora_target_modules=target_pattern,
++            lora_target_modules_support=None,
++        )
++        trainable = sum(param.numel() for param in model.parameters() if param.requires_grad)
++        total = sum(param.numel() for param in model.parameters())
++        logger.info_rank0(
++            f"LoRA enabled: scope={args.train.lora_scope}, rank={args.train.lora_rank}, "
++            f"alpha={args.train.lora_alpha}, trainable={trainable:,}/{total:,} "
++            f"({100.0 * trainable / total:.4f}%)"
++        )
+     use_depth_align = True if args.train.align_params != {} else False
+     use_future_depth = args.train.align_params.get('depth', {}).get('use_future_depth', False)
+     use_future_video = use_depth_align and args.train.align_params.get('use_future_video', False)
+@@ -527,6 +567,11 @@ def main():
+             param_groups=moe_param_groups,
+         )
+ 
++    # Keep the configured per-group learning rates available across DCP load.
++    # PyTorch optimizer checkpoints include each group's old LR, so loading a
++    # checkpoint can otherwise silently override a deliberately changed LR.
++    configured_group_lrs = [group["lr"] for group in optimizer.param_groups]
++
+     # Register loss-free load balancing hook (before optimizer.step).
+     # The hook also all-reduces and snapshots
+     # last_tokens_per_expert (the global load used for monitoring). Setting
+@@ -661,6 +706,20 @@ def main():
+                 start_epoch = global_step // args.train.train_steps
+                 start_step = global_step % args.train.train_steps
+                 lr_scheduler.load_state_dict(state["extra_state"]["lr_scheduler"])
++                if os.environ.get("LINGBOT_RESET_LR_ON_RESUME") == "1":
++                    if len(configured_group_lrs) != len(optimizer.param_groups):
++                        raise RuntimeError(
++                            "Optimizer param-group count changed while resetting LR on resume"
++                        )
++                    for group, configured_lr in zip(optimizer.param_groups, configured_group_lrs):
++                        group["lr"] = configured_lr
++                        group["initial_lr"] = configured_lr
++                    lr_scheduler.base_lrs = list(configured_group_lrs)
++                    lr_scheduler._last_lr = list(configured_group_lrs)
++                    logger.info_rank0(
++                        "Reset resumed optimizer/scheduler learning rates to configured values: "
++                        f"{configured_group_lrs}"
++                    )
+                 if start_step > 0 and args.train.resume_dataloader_state:
+                     train_dataloader.load_state_dict(state["extra_state"]["train_dataloader"])
+                 environ_meter.load_state_dict(state["extra_state"]["environ_meter"])

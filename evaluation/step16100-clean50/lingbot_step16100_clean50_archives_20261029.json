@@ -1,0 +1,12 @@
+{
+  "materials": {
+    "path": "/workspace/runtime/outputs/lingbot_step16100_clean50_materials_20261029.tar.gz",
+    "size": 3945140,
+    "sha256": "a86e2b4796b5b8954ceb3fb8eaf6b2556835b9e2760a522c919d4d3c456de709"
+  },
+  "weights": {
+    "path": "/workspace/runtime/outputs/lingbot_step16100_hf_weights_20261029.tar",
+    "size": 12768204800,
+    "sha256": "042ee90965cc71f19b6652617d783de621dd7ccff027fae145520fba1d4de9e4"
+  }
+}

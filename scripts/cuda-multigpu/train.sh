@@ -12,6 +12,8 @@ OPTIMIZER="${OPTIMIZER:-adamw}"
 ENABLE_RESUME="${ENABLE_RESUME:-auto}"
 SAVE_HF_WEIGHTS="${SAVE_HF_WEIGHTS:-false}"
 LOAD_CHECKPOINT_PATH="${LOAD_CHECKPOINT_PATH:-}"
+FREEZE_VISION_ENCODER="${FREEZE_VISION_ENCODER:-false}"
+TRAIN_EXPERT_ONLY="${TRAIN_EXPERT_ONLY:-false}"
 
 [[ "$(awk -F, '{print NF}' <<<"${GPU_IDS}")" -eq "${GPU_COUNT}" ]] || { echo "GPU_IDS must contain ${GPU_COUNT} IDs" >&2; exit 2; }
 for path in \
@@ -57,5 +59,7 @@ fi
   --train.ckpt_manager dcp \
   --train.save_hf_weights "${SAVE_HF_WEIGHTS}" \
   --train.enable_resume "${ENABLE_RESUME}" \
+  --train.freeze_vision_encoder "${FREEZE_VISION_ENCODER}" \
+  --train.train_expert_only "${TRAIN_EXPERT_ONLY}" \
   "${checkpoint_args[@]}" \
   2>&1 | tee "/workspace/runtime/outputs/logs/train_${PROFILE}_${MAX_STEPS}steps.log"

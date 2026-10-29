@@ -1,0 +1,75 @@
+{
+  "path": "/workspace/runtime/outputs/robotwin_clean_expert_heads_7x4090_formal/checkpoints/global_step_16100/hf_ckpt",
+  "files": [
+    {
+      "name": "added_tokens.json",
+      "size": 707,
+      "sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680"
+    },
+    {
+      "name": "chat_template.jinja",
+      "size": 5292,
+      "sha256": "3636d0f0bd6bef02654cdffdc447b79cb2cef8ab02cc75267345946291a489e4"
+    },
+    {
+      "name": "config.json",
+      "size": 4471,
+      "sha256": "04af9184250007314a3dcf7fbfdde6f3c73886edeea0e4ac8381eeb268613e2d"
+    },
+    {
+      "name": "merges.txt",
+      "size": 1671853,
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+    },
+    {
+      "name": "model-00001-of-00003.safetensors",
+      "size": 4995757160,
+      "sha256": "33b0c88dbd36af70649af3d5502aeab6df6f01d2cbe4b11894b7b4e6dc9b410f"
+    },
+    {
+      "name": "model-00002-of-00003.safetensors",
+      "size": 4992913224,
+      "sha256": "3a6fa75d7c29f2ece377502ab7a5a129dc67f76937153d0ea3d5f370668af27d"
+    },
+    {
+      "name": "model-00003-of-00003.safetensors",
+      "size": 2763405726,
+      "sha256": "0e300b5076a289682649cd95e87420df202d82c12a67672508c7f6f6fc208a33"
+    },
+    {
+      "name": "model.safetensors.index.json",
+      "size": 207389,
+      "sha256": "fa4c88fb1dc8e08a7fdae3c7fdc72fa174f8441bed25d4bd1cc3955be21413da"
+    },
+    {
+      "name": "preprocessor_config.json",
+      "size": 782,
+      "sha256": "93585062a80db5e8ca038efc7726a3e6411d9db948472d81d63c6303993be8c5"
+    },
+    {
+      "name": "special_tokens_map.json",
+      "size": 613,
+      "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd"
+    },
+    {
+      "name": "tokenizer.json",
+      "size": 11422654,
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    {
+      "name": "tokenizer_config.json",
+      "size": 5472,
+      "sha256": "cf43a5bf1a49ee69ecced02f419b169e72559034dcf15af47cf775bd253830f0"
+    },
+    {
+      "name": "video_preprocessor_config.json",
+      "size": 817,
+      "sha256": "59c5c9eb52182eb14c06ffb10ca9effd29adce5f238a95de23ca14a38dbd2cb1"
+    },
+    {
+      "name": "vocab.json",
+      "size": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+  ]
+}

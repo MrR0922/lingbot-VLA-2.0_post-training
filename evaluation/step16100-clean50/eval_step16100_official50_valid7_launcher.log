@@ -1,0 +1,162 @@
+[36mSim workdir: /opt/data/private/lingbot-vla-v2/code/RoboTwin[0m
+[36mSim-side python (robotwin): /opt/robotwin-env/bin/python (Python 3.12.3)[0m
+[36mTasks this run (50): lift_pot hanging_mug stack_bowls_three scan_object handover_block click_bell put_object_cabinet open_microwave stack_blocks_three place_shoe adjust_bottle beat_block_hammer blocks_ranking_rgb blocks_ranking_size click_alarmclock dump_bin_bigbin grab_roller handover_mic move_can_pot move_pillbottle_pad move_playingcard_away place_cans_plasticbox place_container_plate place_dual_shoes place_empty_cup place_fan place_mouse_pad place_object_basket place_object_scale place_object_stand place_phone_stand move_stapler_pad open_laptop pick_diverse_bottles pick_dual_bottles place_a2b_left place_a2b_right place_bread_basket place_bread_skillet place_burger_fries place_can_basket press_stapler rotate_qrcode shake_bottle_horizontally shake_bottle stack_blocks_two stack_bowls_two stamp_seal turn_switch put_bottles_dustbin[0m
+[36mInference config: 7 GPU x 1 servers/GPU = 7 slots[0m
+[36mRun directory: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824[0m
+[32m========== Starting inference side: 7 QwenPi servers, ports 9330~9336 ==========[0m
+[33m[inf slot 0] GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/inference_logs/qwenpi_slot0_gpu0_port9330.log[0m
+[33m[inf slot 1] GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/inference_logs/qwenpi_slot1_gpu1_port9331.log[0m
+[33m[inf slot 2] GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/inference_logs/qwenpi_slot2_gpu2_port9332.log[0m
+[33m[inf slot 3] GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/inference_logs/qwenpi_slot3_gpu3_port9333.log[0m
+[33m[inf slot 4] GPU: 4, PORT: 9334, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/inference_logs/qwenpi_slot4_gpu4_port9334.log[0m
+[33m[inf slot 5] GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/inference_logs/qwenpi_slot5_gpu5_port9335.log[0m
+[33m[inf slot 6] GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/inference_logs/qwenpi_slot6_gpu6_port9336.log[0m
+[32m7 inference servers started, PIDs saved to /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/inference_pids.txt[0m
+[36mWaiting for all inference ports to become ready...[0m
+[32mAll inference ports ready.[0m
+[32m========== Starting sim side (queue-scheduled, 7 concurrent slots) ==========[0m
+[33m  [launch] lift_pot -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/lift_pot.log) [attempt 1/3][0m
+[33m  [launch] hanging_mug -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/hanging_mug.log) [attempt 1/3][0m
+[33m  [launch] stack_bowls_three -> slot 2 (GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/stack_bowls_three.log) [attempt 1/3][0m
+[33m  [launch] scan_object -> slot 3 (GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/scan_object.log) [attempt 1/3][0m
+[33m  [launch] handover_block -> slot 4 (GPU: 4, PORT: 9334, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/handover_block.log) [attempt 1/3][0m
+[33m  [launch] click_bell -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/click_bell.log) [attempt 1/3][0m
+[33m  [launch] put_object_cabinet -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/put_object_cabinet.log) [attempt 1/3][0m
+[31m  [fail] put_object_cabinet slot 6 took 110s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] put_object_cabinet -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/put_object_cabinet.log) [attempt 2/3][0m
+[31m  [fail] put_object_cabinet slot 6 took 26s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] put_object_cabinet -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/put_object_cabinet.log) [attempt 3/3][0m
+[31m  [skip] put_object_cabinet failed 3 times, no more retries[0m
+[33m  [launch] open_microwave -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/open_microwave.log) [attempt 1/3][0m
+[32m  [done] click_bell slot 5 took 4434s (progress 1/50)[0m
+[33m  [launch] stack_blocks_three -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/stack_blocks_three.log) [attempt 1/3][0m
+[32m  [done] scan_object slot 3 took 8417s (progress 2/50)[0m
+[33m  [launch] place_shoe -> slot 3 (GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_shoe.log) [attempt 1/3][0m
+[32m  [done] lift_pot slot 0 took 8602s (progress 3/50)[0m
+[33m  [launch] adjust_bottle -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/adjust_bottle.log) [attempt 1/3][0m
+[31m  [fail] adjust_bottle slot 0 took 25s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] adjust_bottle -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/adjust_bottle.log) [attempt 2/3][0m
+[31m  [fail] adjust_bottle slot 0 took 15s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] adjust_bottle -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/adjust_bottle.log) [attempt 3/3][0m
+[31m  [skip] adjust_bottle failed 3 times, no more retries[0m
+[33m  [launch] beat_block_hammer -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/beat_block_hammer.log) [attempt 1/3][0m
+[32m  [done] open_microwave slot 6 took 12740s (progress 4/50)[0m
+[33m  [launch] blocks_ranking_rgb -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/blocks_ranking_rgb.log) [attempt 1/3][0m
+[32m  [done] handover_block slot 4 took 13448s (progress 5/50)[0m
+[33m  [launch] blocks_ranking_size -> slot 4 (GPU: 4, PORT: 9334, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/blocks_ranking_size.log) [attempt 1/3][0m
+[32m  [done] beat_block_hammer slot 0 took 6701s (progress 6/50)[0m
+[33m  [launch] click_alarmclock -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/click_alarmclock.log) [attempt 1/3][0m
+[32m  [done] hanging_mug slot 1 took 15359s (progress 7/50)[0m
+[33m  [launch] dump_bin_bigbin -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/dump_bin_bigbin.log) [attempt 1/3][0m
+[31m  [fail] dump_bin_bigbin slot 1 took 80s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] dump_bin_bigbin -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/dump_bin_bigbin.log) [attempt 2/3][0m
+[31m  [fail] dump_bin_bigbin slot 1 took 15s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] dump_bin_bigbin -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/dump_bin_bigbin.log) [attempt 3/3][0m
+[31m  [skip] dump_bin_bigbin failed 3 times, no more retries[0m
+[33m  [launch] grab_roller -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/grab_roller.log) [attempt 1/3][0m
+[32m  [done] place_shoe slot 3 took 7725s (progress 8/50)[0m
+[33m  [launch] handover_mic -> slot 3 (GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/handover_mic.log) [attempt 1/3][0m
+[32m  [done] stack_bowls_three slot 2 took 17566s (progress 9/50)[0m
+[33m  [launch] move_can_pot -> slot 2 (GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/move_can_pot.log) [attempt 1/3][0m
+[32m  [done] click_alarmclock slot 0 took 4314s (progress 10/50)[0m
+[33m  [launch] move_pillbottle_pad -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/move_pillbottle_pad.log) [attempt 1/3][0m
+[32m  [done] grab_roller slot 1 took 5774s (progress 11/50)[0m
+[33m  [launch] move_playingcard_away -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/move_playingcard_away.log) [attempt 1/3][0m
+[31m  [fail] move_can_pot slot 2 took 3828s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] move_can_pot -> slot 2 (GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/move_can_pot.log) [attempt 2/3][0m
+[32m  [done] stack_blocks_three slot 5 took 17582s (progress 12/50)[0m
+[33m  [launch] place_cans_plasticbox -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_cans_plasticbox.log) [attempt 1/3][0m
+[31m  [fail] move_can_pot slot 2 took 4043s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] move_can_pot -> slot 2 (GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/move_can_pot.log) [attempt 3/3][0m
+[32m  [done] move_pillbottle_pad slot 0 took 5944s (progress 13/50)[0m
+[33m  [launch] place_container_plate -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_container_plate.log) [attempt 1/3][0m
+[32m  [done] move_playingcard_away slot 1 took 5433s (progress 14/50)[0m
+[33m  [launch] place_dual_shoes -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_dual_shoes.log) [attempt 1/3][0m
+[31m  [fail] place_dual_shoes slot 1 took 522s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] place_dual_shoes -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_dual_shoes.log) [attempt 2/3][0m
+[31m  [fail] place_dual_shoes slot 1 took 486s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] place_dual_shoes -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_dual_shoes.log) [attempt 3/3][0m
+[32m  [done] handover_mic slot 3 took 11653s (progress 15/50)[0m
+[33m  [launch] place_empty_cup -> slot 3 (GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_empty_cup.log) [attempt 1/3][0m
+[31m  [skip] place_dual_shoes failed 3 times, no more retries[0m
+[33m  [launch] place_fan -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_fan.log) [attempt 1/3][0m
+[31m  [skip] move_can_pot failed 3 times, no more retries[0m
+[33m  [launch] place_mouse_pad -> slot 2 (GPU: 2, PORT: 9332, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_mouse_pad.log) [attempt 1/3][0m
+[32m  [done] blocks_ranking_rgb slot 6 took 17552s (progress 16/50)[0m
+[33m  [launch] place_object_basket -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_object_basket.log) [attempt 1/3][0m
+[32m  [done] place_container_plate slot 0 took 6050s (progress 17/50)[0m
+[33m  [launch] place_object_scale -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_object_scale.log) [attempt 1/3][0m
+[31m  [fail] place_object_scale slot 0 took 70s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] place_object_scale -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_object_scale.log) [attempt 2/3][0m
+[31m  [fail] place_object_scale slot 0 took 25s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] place_object_scale -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_object_scale.log) [attempt 3/3][0m
+[31m  [skip] place_object_scale failed 3 times, no more retries[0m
+[33m  [launch] place_object_stand -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_object_stand.log) [attempt 1/3][0m
+[32m  [done] place_fan slot 1 took 6184s (progress 18/50)[0m
+[33m  [launch] place_phone_stand -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_phone_stand.log) [attempt 1/3][0m
+[32m  [done] place_empty_cup slot 3 took 8476s (progress 19/50)[0m
+[33m  [launch] move_stapler_pad -> slot 3 (GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/move_stapler_pad.log) [attempt 1/3][0m
+[32m  [done] place_cans_plasticbox slot 5 took 14335s (progress 20/50)[0m
+[33m  [launch] open_laptop -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/open_laptop.log) [attempt 1/3][0m
+[31m  [fail] open_laptop slot 5 took 26s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] open_laptop -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/open_laptop.log) [attempt 2/3][0m
+[31m  [fail] open_laptop slot 5 took 20s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] open_laptop -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/open_laptop.log) [attempt 3/3][0m
+[31m  [skip] open_laptop failed 3 times, no more retries[0m
+[33m  [launch] pick_diverse_bottles -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/pick_diverse_bottles.log) [attempt 1/3][0m
+[31m  [fail] pick_diverse_bottles slot 5 took 85s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] pick_diverse_bottles -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/pick_diverse_bottles.log) [attempt 2/3][0m
+[31m  [fail] pick_diverse_bottles slot 5 took 80s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] pick_diverse_bottles -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/pick_diverse_bottles.log) [attempt 3/3][0m
+[31m  [skip] pick_diverse_bottles failed 3 times, no more retries[0m
+[33m  [launch] pick_dual_bottles -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/pick_dual_bottles.log) [attempt 1/3][0m
+[32m  [done] place_object_stand slot 0 took 5823s (progress 21/50)[0m
+[33m  [launch] place_a2b_left -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_a2b_left.log) [attempt 1/3][0m
+[32m  [done] place_phone_stand slot 1 took 6701s (progress 22/50)[0m
+[33m  [launch] place_a2b_right -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_a2b_right.log) [attempt 1/3][0m
+[32m  [done] move_stapler_pad slot 3 took 5858s (progress 23/50)[0m
+[33m  [launch] place_bread_basket -> slot 3 (GPU: 3, PORT: 9333, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_bread_basket.log) [attempt 1/3][0m
+[32m  [done] place_a2b_left slot 0 took 5658s (progress 24/50)[0m
+[33m  [launch] place_bread_skillet -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_bread_skillet.log) [attempt 1/3][0m
+[32m  [done] pick_dual_bottles slot 5 took 6600s (progress 25/50)[0m
+[33m  [launch] place_burger_fries -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_burger_fries.log) [attempt 1/3][0m
+[32m  [done] place_a2b_right slot 1 took 5758s (progress 26/50)[0m
+[33m  [launch] place_can_basket -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_can_basket.log) [attempt 1/3][0m
+[32m  [done] place_object_basket slot 6 took 16742s (progress 27/50)[0m
+[33m  [launch] press_stapler -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/press_stapler.log) [attempt 1/3][0m
+[32m  [done] press_stapler slot 6 took 2633s (progress 28/50)[0m
+[33m  [launch] rotate_qrcode -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/rotate_qrcode.log) [attempt 1/3][0m
+[31m  [fail] place_bread_skillet slot 0 took 8005s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] place_bread_skillet -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_bread_skillet.log) [attempt 2/3][0m
+[32m  [done] place_burger_fries slot 5 took 9138s (progress 29/50)[0m
+[33m  [launch] shake_bottle_horizontally -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/shake_bottle_horizontally.log) [attempt 1/3][0m
+[31m  [fail] shake_bottle_horizontally slot 5 took 126s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] shake_bottle_horizontally -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/shake_bottle_horizontally.log) [attempt 2/3][0m
+[31m  [fail] shake_bottle_horizontally slot 5 took 125s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] shake_bottle_horizontally -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/shake_bottle_horizontally.log) [attempt 3/3][0m
+[31m  [skip] shake_bottle_horizontally failed 3 times, no more retries[0m
+[33m  [launch] shake_bottle -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/shake_bottle.log) [attempt 1/3][0m
+[31m  [fail] shake_bottle slot 5 took 25s exit=1, retrying on this slot (1/3)[0m
+[33m  [launch] shake_bottle -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/shake_bottle.log) [attempt 2/3][0m
+[31m  [fail] shake_bottle slot 5 took 161s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] shake_bottle -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/shake_bottle.log) [attempt 3/3][0m
+[31m  [skip] shake_bottle failed 3 times, no more retries[0m
+[33m  [launch] stack_blocks_two -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/stack_blocks_two.log) [attempt 1/3][0m
+[32m  [done] rotate_qrcode slot 6 took 5783s (progress 30/50)[0m
+[33m  [launch] stack_bowls_two -> slot 6 (GPU: 6, PORT: 9336, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/stack_bowls_two.log) [attempt 1/3][0m
+[31m  [fail] place_bread_skillet slot 0 took 8070s exit=1, retrying on this slot (2/3)[0m
+[33m  [launch] place_bread_skillet -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/place_bread_skillet.log) [attempt 3/3][0m
+[32m  [done] place_can_basket slot 1 took 17133s (progress 31/50)[0m
+[33m  [launch] stamp_seal -> slot 1 (GPU: 1, PORT: 9331, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/stamp_seal.log) [attempt 1/3][0m
+[32m  [done] stack_blocks_two slot 5 took 11401s (progress 32/50)[0m
+[33m  [launch] turn_switch -> slot 5 (GPU: 5, PORT: 9335, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/turn_switch.log) [attempt 1/3][0m
+[31m  [skip] place_bread_skillet failed 3 times, no more retries[0m
+[33m  [launch] put_bottles_dustbin -> slot 0 (GPU: 0, PORT: 9330, Log: /workspace/runtime/outputs/eval_step16100_official50_valid7/robotwin_clean_expert_heads_7x4090_formal_16k_demo_clean_20261027_002824/eval_logs/put_bottles_dustbin.log) [attempt 1/3][0m
+[32m  [done] turn_switch slot 5 took 4047s (progress 33/50)[0m
+[36m  [release] slot 5 inference server (PID: 508298) stopped, remaining: 6[0m
+[32m  [done] stack_bowls_two slot 6 took 13036s (progress 34/50)[0m
+[36m  [release] slot 6 inference server (PID: 508302) stopped, remaining: 5[0m
+[32m  [done] stamp_seal slot 1 took 5688s (progress 35/50)[0m
+[36m  [release] slot 1 inference server (PID: 508282) stopped, remaining: 4[0m
+[32m  [done] put_bottles_dustbin slot 0 took 23261s (progress 36/50)[0m
+[36m  [release] slot 0 inference server (PID: 508278) stopped, remaining: 3[0m
